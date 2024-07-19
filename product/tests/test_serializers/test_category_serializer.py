@@ -11,7 +11,7 @@ class TestCategorySerializer(TestCase):
 
     def test_category_serializer(self):
         serializer_data = self.category_serializer.data
-        self.assertEquals(serializer_data["title"], "food")
+        self.assertEqual(serializer_data["title"], "food")
 
     def test_category_serializer_fields(self):
         expected_fields = ["title", "slug", "description", "active"]
