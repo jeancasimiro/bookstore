@@ -17,7 +17,7 @@ class TestOrderViewSet(APITestCase):
     def setUp(self):
         self.user = UserFactory()
         self.token = Token.objects.create(user=self.user)
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
 
         self.category = CategoryFactory(title="technology")
         self.product = ProductFactory(
@@ -27,8 +27,7 @@ class TestOrderViewSet(APITestCase):
     def test_order(self):
         self.order = OrderFactory(user=self.user, product=[self.product])
 
-        response = self.client.get(
-            reverse("order-list", kwargs={"version": "v1"}))
+        response = self.client.get(reverse("order-list", kwargs={"version": "v1"}))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
