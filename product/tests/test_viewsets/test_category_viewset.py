@@ -16,7 +16,6 @@ class CategoryViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         category_data = json.loads(response.content)
 
-        # Verifique a chave 'results' e a lista dentro dela
         self.assertIn("results", category_data, "Key 'results' not found in response")
         self.assertGreater(len(category_data["results"]), 0, "No categories found in 'results'")
         self.assertEqual(category_data["results"][0]["title"], self.category.title)
