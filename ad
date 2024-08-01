@@ -1,0 +1,190 @@
+warning: in the working copy of 'order/models/__init__.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'order/serializers/__init__.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'order/viewsets/__init__.py', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/bookstore/settings.py b/bookstore/settings.py[m
+[1mindex 0cc85f4..e6add3d 100644[m
+[1m--- a/bookstore/settings.py[m
+[1m+++ b/bookstore/settings.py[m
+[36m@@ -26,7 +26,7 @@[m [mSECRET_KEY = int(os.environ.get("DEBUG", default=0))[m
+ # SECURITY WARNING: don't run with debug turned on in production![m
+ DEBUG = int(os.environ.get("DEBUG", default=0))[m
+ [m
+[31m-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")[m
+[32m+[m[32mALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "").split()[m
+ [m
+ [m
+ # Application definition[m
+[36m@@ -144,4 +144,4 @@[m [mREST_FRAMEWORK = {[m
+         "rest_framework.authentication.SessionAuthentication",[m
+         "rest_framework.authentication.TokenAuthentication",[m
+     ],[m
+[31m-}[m
+\ No newline at end of file[m
+[32m+[m[32m}[m
+[1mdiff --git a/bookstore/urls.py b/bookstore/urls.py[m
+[1mindex 106d27b..aa1b81d 100644[m
+[1m--- a/bookstore/urls.py[m
+[1m+++ b/bookstore/urls.py[m
+[36m@@ -15,16 +15,15 @@[m [mIncluding another URLconf[m
+     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))[m
+ """[m
+ [m
+[31m-[m
+ from django.contrib import admin[m
+ from django.urls import path, re_path, include[m
+ import debug_toolbar[m
+ from rest_framework.authtoken.views import obtain_auth_token[m
+ [m
+ urlpatterns = [[m
+[31m-    path('__debug__/', include(debug_toolbar.urls)),[m
+[32m+[m[32m    path("__debug__/", include(debug_toolbar.urls)),[m
+     path("admin/", admin.site.urls),[m
+[31m-        re_path("bookstore/(?P<version>(v1|v2))/", include("order.urls")),[m
+[31m-        re_path("bookstore/(?P<version>(v1|v2))/", include("product.urls")),[m
+[31m-    path('api-token-auth/', obtain_auth_token, name='api_token_auth'),[m
+[32m+[m[32m    re_path("bookstore/(?P<version>(v1|v2))/", include("order.urls")),[m
+[32m+[m[32m    re_path("bookstore/(?P<version>(v1|v2))/", include("product.urls")),[m
+[32m+[m[32m    path("api-token-auth/", obtain_auth_token, name="api_token_auth"),[m
+ ][m
+[1mdiff --git a/docker-compose.yml b/docker-compose.yml[m
+[1mindex 1309f30..7b17599 100644[m
+[1m--- a/docker-compose.yml[m
+[1m+++ b/docker-compose.yml[m
+[36m@@ -1,27 +1,25 @@[m
+ version: '3.9'[m
+ [m
+ services:[m
+[31m-  db:[m
+[31m-    image: postgres:13.0-alpine[m
+[31m-    ports:[m
+[31m-      - 5432:5432[m
+[31m-    volumes:[m
+[31m-      - postgres_data:/var/lib/postgresql/data/[m
+[31m-    environment:[m
+[31m-      - POSTGRES_USER=bookstore_dev[m
+[31m-      - POSTGRES_PASSWORD=bookstore_dev[m
+[31m-      - POSTGRES_DB=bookstore_dev_db[m
+[31m-  web:[m
+[32m+[m[32m  backend:[m
+     build: .[m
+     command: python manage.py runserver 0.0.0.0:8000[m
+     volumes:[m
+[31m-      - . :/usr/src/app/[m
+[32m+[m[32m      - .:/usr/src/app/[m
+     ports:[m
+       - 8000:8000[m
+     env_file:[m
+       - ./env.dev[m
+     depends_on:[m
+       - db[m
+[32m+[m[32m  db:[m
+[32m+[m[32m    image: postgres:13.0-alpine[m
+[32m+[m[32m    volumes:[m
+[32m+[m[32m      - postgres_data:/var/lib/postgresql/data/[m
+[32m+[m[32m    environment:[m
+[32m+[m[32m      - POSTGRES_USER=dev[m
+[32m+[m[32m      - POSTGRES_PASSWORD=dev[m
+[32m+[m[32m      - POSTGRES_DB=bookstore_db[m
+ [m
+ volumes:[m
+   postgres_data:[m
+\ No newline at end of file[m
+[1mdiff --git a/env.dev b/env.dev[m
+[1mindex 491c2f0..fca16a0 100644[m
+[1m--- a/env.dev[m
+[1m+++ b/env.dev[m
+[36m@@ -2,8 +2,8 @@[m [mDEBUG=1[m
+ SECRET_KEY=foo[m
+ DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1][m
+ SQL_ENGINE=django.db.backends.postgresql[m
+[31m-SQL_DATABASE=bookstore_dev_db[m
+[31m-SQL_USER=bookstore_dev[m
+[31m-SQL_PASSWORD=bookstore_dev[m
+[32m+[m[32mSQL_DATABASE=bookstore_db[m
+[32m+[m[32mSQL_USER=dev[m
+[32m+[m[32mSQL_PASSWORD=dev[m
+ SQL_HOST=db[m
+ SQL_PORT=5432[m
+\ No newline at end of file[m
+[1mdiff --git a/order/factories.py b/order/factories.py[m
+[1mindex bb215f0..0ebd095 100644[m
+[1m--- a/order/factories.py[m
+[1m+++ b/order/factories.py[m
+[36m@@ -26,4 +26,4 @@[m [mclass OrderFactory(factory.django.DjangoModelFactory):[m
+                 self.product.add(product)[m
+ [m
+     class Meta:[m
+[31m-        model = Order[m
+\ No newline at end of file[m
+[32m+[m[32m        model = Order[m
+[1mdiff --git a/order/models/__init__.py b/order/models/__init__.py[m
+[1mindex 0065b08..a611692 100644[m
+[1m--- a/order/models/__init__.py[m
+[1m+++ b/order/models/__init__.py[m
+[36m@@ -1 +1 @@[m
+[31m-from .order import Order[m
+\ No newline at end of file[m
+[32m+[m[32mfrom .order import Order[m
+[1mdiff --git a/order/models/order.py b/order/models/order.py[m
+[1mindex 1ec4256..aef447b 100644[m
+[1m--- a/order/models/order.py[m
+[1m+++ b/order/models/order.py[m
+[36m@@ -6,4 +6,4 @@[m [mfrom product.models import Product[m
+ [m
+ class Order(models.Model):[m
+     product = models.ManyToManyField(Product, blank=False)[m
+[31m-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)[m
+\ No newline at end of file[m
+[32m+[m[32m    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)[m
+[1mdiff --git a/order/serializers/__init__.py b/order/serializers/__init__.py[m
+[1mindex 522d7a7..e7396e1 100644[m
+[1m--- a/order/serializers/__init__.py[m
+[1m+++ b/order/serializers/__init__.py[m
+[36m@@ -1 +1 @@[m
+[31m-from .order_serializer import OrderSerializer[m
+\ No newline at end of file[m
+[32m+[m[32mfrom .order_serializer import OrderSerializer[m
+[1mdiff --git a/order/serializers/order_serializer.py b/order/serializers/order_serializer.py[m
+[1mindex a5a62cd..2a3e7d5 100644[m
+[1m--- a/order/serializers/order_serializer.py[m
+[1m+++ b/order/serializers/order_serializer.py[m
+[36m@@ -29,4 +29,4 @@[m [mclass OrderSerializer(serializers.ModelSerializer):[m
+         for product in product_data:[m
+             order.product.add(product)[m
+ [m
+[31m-        return order[m
+\ No newline at end of file[m
+[32m+[m[32m        return order[m
+[1mdiff --git a/order/tests/test_serializers/test_order_serializer.py b/order/tests/test_serializers/test_order_serializer.py[m
+[1mindex 4a67c43..cc86edc 100644[m
+[1m--- a/order/tests/test_serializers/test_order_serializer.py[m
+[1m+++ b/order/tests/test_serializers/test_order_serializer.py[m
+[36m@@ -3,6 +3,7 @@[m [mfrom django.test import TestCase[m
+ from order.factories import OrderFactory, ProductFactory[m
+ from order.serializers import OrderSerializer[m
+ [m
+[32m+[m
+ class TestOrderSerializer(TestCase):[m
+     def setUp(self) -> None:[m
+         self.product_1 = ProductFactory()[m
+[36m@@ -13,11 +14,9 @@[m [mclass TestOrderSerializer(TestCase):[m
+ [m
+     def test_order_serializer(self):[m
+         serializer_data = self.order_serializer.data[m
+[31m-        self.assertEqual([m
+[31m-            serializer_data["product"][0]["title"], self.product_1.title)[m
+[31m-        self.assertEqual([m
+[31m-            serializer_data["product"][1]["title"], self.product_2.title)[m
+[31m-        [m
+[32m+[m[32m        self.assertEqual(serializer_data["product"][0]["title"], self.product_1.title)[m
+[32m+[m[32m        self.assertEqual(serializer_data["product"][1]["title"], self.product_2.title)[m
+[32m+[m
+     def test_order_serializer_fields(self):[m
+         order_serializer = OrderSerializer(self.order)[m
+         serializer_data = order_serializer.data[m
+[1mdiff --git a/order/tests/test_viewsets/test_order_viewset.py b/order/tests/test_viewsets/test_order_viewset.py[m
+[1mindex 2fd17c3..0ae6b89 100644[m
+[1m--- a/order/tests/test_viewsets/test_order_viewset.py[m
+[1m+++ b/order/tests/test_viewsets/test_order_viewset.py[m
+[36m@@ -17,7 +17,7 @@[m [mclass TestOrderViewSet(APITestCase):[m
+     def set
