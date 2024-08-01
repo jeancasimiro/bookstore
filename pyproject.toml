@@ -18,6 +18,9 @@ pytz = "^2024.1"
 psycopg2-binary = "^2.9.9"
 flake8 = "^7.1.0"
 black = "^24.4.2"
+whitenoise = "^6.7.0"
+gunicorn = "^22.0.0"
+gitpython = "^3.1.43"
 
 
 [build-system]
